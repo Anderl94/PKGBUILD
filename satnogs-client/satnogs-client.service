@@ -1,0 +1,12 @@
+[Unit]
+Description=SatNOGS client
+
+[Service]
+#User=satnogs
+#Group=satnogs
+EnvironmentFile=-/etc/default/satnogs.conf
+ExecStart=/usr/bin/satnogs-client
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

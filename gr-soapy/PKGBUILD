@@ -1,0 +1,26 @@
+pkgname=gr-soapy
+pkgver=2.1.3
+pkgrel=1
+pkgdesc="SatNOGS GNU Radio flowgraphs"
+arch=('any')
+license=('GNU GPLv3')
+url="https://satnogs.org"
+depends=('gnuradio' 'soapysdr' 'soapyrtlsdr' 'gr-satnogs')
+makedepends=('cmake' 'gcc' 'boost' 'libvolk')
+source=("https://gitlab.com/librespacefoundation/gr-soapy/-/archive/v${pkgver}/gr-soapy-v${pkgver}.tar.gz")
+md5sums=('b0bc89932d59eaab6d062352c0763754')
+
+
+build() {
+   mkdir -p "$srcdir/gr-soapy-v${pkgver}/build"
+   cd "$srcdir/gr-soapy-v${pkgver}/build"
+   cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -Wno-dev ..
+   make
+}
+ 
+package() {
+   cd "$srcdir/gr-soapy-v${pkgver}/build"
+   make DESTDIR="$pkgdir/" install
+}
+ 
+

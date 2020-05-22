@@ -1,0 +1,37 @@
+pkgname=satnogs-client
+pkgver=1.3.1
+pkgrel=1
+pkgdesc="This package automates the reception of signals from satellites (cubesats, amateur radio satellites, weather satellites) for the satnogs.org network"
+arch=('any')
+license=('GNU AGPL v3')
+url="https://satnogs.org"
+depends=('python3' 'hamlib')
+makedepends=('python3')
+source=("https://gitlab.com/librespacefoundation/satnogs/satnogs-client/-/archive/${pkgver}/satnogs-client-${pkgver}.tar.gz"
+		'satnogs-client.service'
+		'satnogs.config')
+md5sums=('0535f46ab8b6bb361a8caacd1553d4c7'
+         '29727f59b686d2a4d38e6c4110289f5d'
+         '75454326d0eb12066f9b972569074650')
+
+
+build() {
+   cd satnogs-client-${pkgver}
+   python setup.py build
+}
+ 
+check() {
+   cd satnogs-client-${pkgver}
+   # test fail in chroot LC_CTYPE=en_US.utf8 fixes tests on installed system
+   #python setup.py test
+}
+ 
+package() {
+   cd satnogs-client-${pkgver}
+   
+   python setup.py install --prefix=/var/lib/satnogs/usr --root=${pkgdir} --optimize=1 --skip-build
+   install -D -m644 "${srcdir}"/satnogs-client.service "${pkgdir}/usr/lib/systemd/system/satnogs-client.service"
+   install -D -m644 "${srcdir}"/satnogs.config "${pkgdir}/etc/default/satnogs"
+}
+ 
+

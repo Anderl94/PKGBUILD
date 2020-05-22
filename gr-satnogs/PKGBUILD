@@ -1,0 +1,26 @@
+pkgname=gr-satnogs
+pkgver=2.1.2
+pkgrel=1
+pkgdesc="gr-satnogs is an out-of-tree GNU Radio module that provides all the necessary tools for decoding signals from various scientific and academic satellites"
+arch=('any')
+license=('GNU GPLv3')
+url="https://satnogs.org"
+depends=('gnuradio')
+makedepends=('cmake' 'gcc' 'boost' 'libvolk' 'libogg' 'libvorbis' 'libpng' 'nlohmann-json' 'swig' 'png++')
+source=("https://gitlab.com/librespacefoundation/satnogs/gr-satnogs/-/archive/v${pkgver}/gr-satnogs-v${pkgver}.tar.gz")
+md5sums=('83ffd48b068958622c2182b078fce20c')
+
+
+build() {
+   mkdir -p "$srcdir/gr-satnogs-v${pkgver}/build"
+   cd "$srcdir/gr-satnogs-v${pkgver}/build"
+   cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -Wno-dev ..
+   make
+}
+ 
+package() {
+   cd "$srcdir/gr-satnogs-v${pkgver}/build"
+   make DESTDIR="$pkgdir/" install
+}
+ 
+

@@ -1,0 +1,24 @@
+pkgname=satnogs-flowgraphs
+pkgver=1.2
+pkgrel=1
+pkgdesc="SatNOGS GNU Radio flowgraphs"
+arch=('any')
+license=('GNU GPLv3')
+url="https://satnogs.org"
+depends=('gnuradio' 'gr-satnogs' 'gr-soapy')
+makedepends=('cmake')
+source=("https://gitlab.com/librespacefoundation/satnogs/satnogs-flowgraphs/-/archive/${pkgver}/satnogs-flowgraphs-${pkgver}.tar.gz")
+md5sums=('f5f664c6481b82ec4d5aaeaff99c9904')
+
+build() {
+   mkdir -p "$srcdir/satnogs-flowgraphs-${pkgver}/build"
+   cd "$srcdir/satnogs-flowgraphs-${pkgver}/build"
+   cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -Wno-dev ..
+   make
+}
+ 
+package() {
+   cd "$srcdir/satnogs-flowgraphs-${pkgver}/build"
+   make DESTDIR="$pkgdir/" install
+}
+ 
