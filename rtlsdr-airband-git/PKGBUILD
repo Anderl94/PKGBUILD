@@ -1,0 +1,44 @@
+# Maintainer: Michal Krenek (Mikos) <m.krenek@gmail.com>
+pkgname=rtlsdr-airband-git
+pkgver=r390.ec95adb
+pkgrel=1
+pkgdesc="RTLSDR AM demodulator, support multiple channels per dongle"
+arch=('i686' 'x86_64')
+url="https://github.com/szpajder/RTLSDR-Airband"
+license=('GPL3')
+depends=('rtl-sdr' 'fftw' 'libvorbis' 'lame' 'libshout' 'libconfig' 'soapysdr' 'soapyrtlsdr' 'soapyhackrf' 'soapyremote' 'pulseaudio')
+makedepends=('git')
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=('rtlsdr-airband::git+https://github.com/szpajder/RTLSDR-Airband.git#branch=unstable')
+sha256sums=('SKIP')
+
+pkgver() {
+    cd "$srcdir/${pkgname%-git}"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+    cd "$srcdir/${pkgname%-git}"
+    sed -i 's|PREFIX = /usr/local|PREFIX =|g' makefile
+}
+
+build() {
+    cd "$srcdir/${pkgname%-git}"
+    case "$CARCH" in
+    x86_64)
+        make PLATFORM=x86 WITH_SOAPYSDR=1 NFM=1 PULSE=1
+        ;;
+    aarch64)
+        make PLATFORM=armv8-generic WITH_SOAPYSDR=1 NFM=1 PULSE=1
+        ;;
+    armv6h|armv7h)
+        make PLATFORM=armv7-generic WITH_SOAPYSDR=1 NFM=1 PULSE=1
+        ;;
+esac
+}
+
+package() {
+    cd "$srcdir/${pkgname%-git}"
+    install -Dm 0755 rtl_airband ${pkgdir}/usr/bin/rtl_airband
+}
